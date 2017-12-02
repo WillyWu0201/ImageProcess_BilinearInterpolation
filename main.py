@@ -2,26 +2,34 @@ from PIL import Image
 import numpy as np
 import cv2
 
-def getPhoto():
-    im1 = Image.open("108190.jpg")
-    im2 = Image.open("108191.jpg")
+def openPhoto(name: str):
+    return Image.open(name)
 
-    print(im1.format, im1.size, im1.mode)
-    print(im2.format, im2.size, im2.mode)
-
+def readPhoto(name: str):
+    im = cv2.imread(name)
+    cv2.imshow('image', im)
+    cv2.waitKey(0)
 
 def getFunctionParaOfX():
-    A = np.mat('48,193,1; 119,360,1; 426,298,1')
-    b = np.mat('428,421,751').T
-    r = np.linalg.solve(A, b)
-    print(r)
+    a = np.array([[48, 193, 1], [119, 360, 1], [426, 298, 1]])
+    b = np.array([428, 421, 751])
+    x = np.linalg.solve(a, b)
+    return x
 
 def getFunctionParaOfY():
-    A = np.mat('48,193,1; 119,360,1; 426,298,1')
-    b = np.mat('142,304,394').T
-    r = np.linalg.solve(A, b)
-    print(r)
+    a = np.array([[48, 193, 1], [119, 360, 1], [426, 298, 1]])
+    b = np.array([142, 304, 394])
+    y = np.linalg.solve(a, b)
+    return y
 
-getPhoto()
-getFunctionParaOfX()
-getFunctionParaOfY()
+im1 = openPhoto("108190.jpg")
+im2 = openPhoto("108191.jpg")
+readPhoto("108190.jpg")
+readPhoto("108191.jpg")
+X = getFunctionParaOfX()
+Y = getFunctionParaOfY()
+
+print(im1.format, im1.size, im1.mode)
+print(im2.format, im2.size, im2.mode)
+print(X[0], X[1], X[2])
+print(Y[0], Y[1], Y[2])
