@@ -14,38 +14,24 @@ def savePhoto(name, im):
 def showPhoto(image):
     Image.open(image + '.png').show()
 
-# 取得六參數(圖ㄧ對應圖二)
+# 取得六參數
 def getFunctionParaOfX():
-    a = np.array([[428, 142, 1], [421, 304, 1], [751, 394, 1]])
-    b = np.array([48, 119, 426])
+    a = np.array([[2418, 67, 1], [1992, 1952, 1], [2896, 1866, 1]])
+    b = np.array([601, 177, 1081])
     x = np.linalg.solve(a, b)
     return x
 
 def getFunctionParaOfY():
-    a = np.array([[428, 142, 1], [421, 304, 1], [751, 394, 1]])
-    b = np.array([193, 360, 298])
+    a = np.array([[2418, 67, 1], [1992, 1952, 1], [2896, 1866, 1]])
+    b = np.array([71, 1958, 1870])
     y = np.linalg.solve(a, b)
     return y
 
-# 取得六參數(圖二對應圖一)
-# def getFunctionParaOfX():
-#     a = np.array([[48, 193, 1], [119, 360, 1], [426, 298, 1]])
-#     b = np.array([428, 421, 751])
-#     x = np.linalg.solve(a, b)
-#     return x
-#
-# def getFunctionParaOfY():
-#     a = np.array([[48, 193, 1], [119, 360, 1], [426, 298, 1]])
-#     b = np.array([142, 304, 394])
-#     y = np.linalg.solve(a, b)
-#     return y
-
-# 把照片一轉成照片二的座標
+# 轉換座標
 def getTransferCoordinate(X, Y, x, y):
     newX = X[0] * x + X[1] * y + X[2]
     newY = Y[0] * x + Y[1] * y + Y[2]
     return (newX, newY)
-    # return(int(newX + 0.5), int(newY + 0.5)) # 四捨五入
 
 # 做Bilinear Interpolate
 def getBilinearInterpolate(im, x, y):
@@ -75,30 +61,34 @@ def getBilinearInterpolate(im, x, y):
     result = wa * imA + wb * imB + wc * imC + wd * imD
     return result
 
-NewPhotoFileName = 'combinePhoto' # 'combineBilinearPhoto'
+# 輸入的檔案名稱
+NewPhotoFileName = 'combineBilinearPhoto'
 
 # 讀入照片
-im1 = readPhoto("small246.jpg")
-im2 = readPhoto("small247.jpg")
+im1 = readPhoto("1.jpg")
+im2 = readPhoto("2.jpg")
 
 # 算出六參數
 X = getFunctionParaOfX()
 Y = getFunctionParaOfY()
 
+# 驗證六參數
+newX, newY = getTransferCoordinate(X, Y, 2176, 1122)
+print(newX, newY)
+
 # 建立一張新照片
-newImage = np.zeros((450 * 2, 800 * 2, 3), np.uint8)
+newImage = np.zeros((2438, 5430, 3), np.uint8)
 height, width, _ = newImage.shape
 
 # 處理新照片
 print('start process photo')
 for x in range(width):
     for y in range(height):
-        if y < 450 and x < 800:
-            newImage[y][x] = im1[y][x]
+        if y < 2227 and x < 3147:
+            newImage[y][x] = getBilinearInterpolate(im1, x, y)
         else:
             newX, newY = getTransferCoordinate(X, Y, x, y)
-            if 0 <= newY < 450 and 0 <= newX < 800:
-                # newImage[y][x] = im2[newY][newX]
+            if 0 <= newY < 2227 and 0 <= newX < 3147:
                 newImage[y][x] = getBilinearInterpolate(im2, newX, newY)
             else:
                 newImage[y][x] = 0
